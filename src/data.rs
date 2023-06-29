@@ -1,16 +1,10 @@
 use serde::{Serialize, Deserialize};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct MatchUp {
     pub athlete_one: String,
     pub athlete_two: String,
     pub bets: Vec<Bet>,
-    pub winner: Option<String>,
-}
-
-#[derive(PartialEq, Debug)]
-pub enum BetError {
-    WrongAthlete,
 }
 
 impl MatchUp {
@@ -19,13 +13,12 @@ impl MatchUp {
             athlete_one,
             athlete_two,
             bets: Vec::new(),
-            winner: None,
         }
     }
 
-    pub fn add_bet(&mut self, athlete: String, user: String, amount: f32) -> Result<(), BetError> {
+    pub fn add_bet(&mut self, athlete: String, user: String, amount: f32) -> Result<(), String> {
         if self.athlete_one != athlete && self.athlete_two != athlete {
-            return Err(BetError::WrongAthlete);
+            return Err(self.incorrect_athlete());
         }
 
         self.bets.push(Bet {
@@ -36,11 +29,10 @@ impl MatchUp {
         Ok(())
     }
 
-    pub fn payout(&mut self, athlete: &str) -> Result<Vec<String>, BetError> {
+    pub fn payout(&self, athlete: &str) -> Result<Vec<String>, String> {
         if !self.athlete_exists(athlete) {
-            return Err(BetError::WrongAthlete);
+            return Err(self.incorrect_athlete());
         }
-        self.winner = Some(athlete.to_string());
         let mut winning_bets: Vec<&Bet> = Vec::new();
         let mut winning_pot: f32 = 0.0;
         let mut losing_bets: Vec<&Bet> = Vec::new();
@@ -70,9 +62,13 @@ impl MatchUp {
     fn athlete_exists(&self, name: &str) -> bool {
         self.athlete_one == name || self.athlete_two == name
     }
+
+    fn incorrect_athlete(&self) -> String {
+        "Athlete name incorrect".to_string()
+    }
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Bet {
     pub user: String,
     pub amount: f32,
@@ -97,7 +93,6 @@ mod tests {
         assert_eq!("Brzenk".to_string(), match_up.athlete_one);
         assert_eq!("Cyplenkov".to_string(), match_up.athlete_two);
         assert!(match_up.bets.len() == 0);
-        assert_eq!(None, match_up.winner);
     }
 
     #[test]
@@ -121,7 +116,7 @@ mod tests {
         let mut match_up = create_match_up();
 
         let result = match_up.add_bet("Pushkar".to_string(), "Toop".to_string(), 100.0);
-        assert!(result == Err(BetError::WrongAthlete));
+        assert!(result == Err("Athlete name incorrect".to_string()));
     }
 
     #[test]
@@ -148,7 +143,6 @@ mod tests {
         let result = match_up.payout("Brzenk").expect("Fail");
 
         assert_eq!(Vec::from(["/add-money Toop 116.83333", "/add-money Toop 233.66666",  "/remove-money Poot 220", "/remove-money Foo 130.5"]), result);
-        assert_eq!(Some("Brzenk".to_string()), match_up.winner);
     }
 }
 
