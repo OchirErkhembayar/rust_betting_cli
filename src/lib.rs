@@ -8,6 +8,51 @@ use crate::{
     repository::MatchUpRepository,
 };
 
+pub fn run() {
+    let mut match_up_controller = MatchUpController::new(MatchUpRepository::new());
+
+    loop {
+        println!("    ");
+        println!("{}", "* ----------------------- *".red().bold());
+        println!("    ");
+        println!("{}", "Options".yellow().underline());
+        println!("1. Display matches");
+        println!("2. See bets");
+        println!("3. Add match");
+        println!("4. Add bet");
+        println!("5. Delete match");
+        println!("6. Delete bet");
+        println!("7. Generate results");
+        println!("8. Exit\n");
+
+        let option = match view::get_usize_input("Enter an option") {
+            Ok(option) => option,
+            Err(error) => {
+                view::display_error(&error);
+                continue;
+            }
+        };
+
+        print!("{}[2J", 27 as char);
+        match option {
+            1 => match_up_controller.show_match_ups(),
+            2 => match_up_controller.show_bets(),
+            3 => match_up_controller.add_match_up(),
+            4 => match_up_controller.add_bet(),
+            5 => match_up_controller.delete_match(),
+            6 => match_up_controller.delete_bet(),
+            7 => match_up_controller.calculate_winnings(),
+            8 => exit(),
+            _ => println!("That's not right, try again"),
+        }
+    }
+}
+
+fn exit() {
+    println!("Bye!");
+    std::process::exit(420);
+}
+
 struct MatchUpController {
     match_up_repository: MatchUpRepository,
 }
@@ -231,50 +276,5 @@ impl MatchUpController {
         self.match_up_repository.delete(index - 1);
         view::display_sucess("Successfully deleted match");
     }
-}
-
-pub fn run() {
-    let mut match_up_controller = MatchUpController::new(MatchUpRepository::new());
-
-    loop {
-        println!("    ");
-        println!("{}", "* ----------------------- *".red().bold());
-        println!("    ");
-        println!("{}", "Options".yellow().underline());
-        println!("1. Display matches");
-        println!("2. See bets");
-        println!("3. Add match");
-        println!("4. Add bet");
-        println!("5. Delete match");
-        println!("6. Delete bet");
-        println!("7. Generate results");
-        println!("8. Exit\n");
-
-        let option = match view::get_usize_input("Enter an option") {
-            Ok(option) => option,
-            Err(error) => {
-                view::display_error(&error);
-                continue;
-            }
-        };
-
-        print!("{}[2J", 27 as char);
-        match option {
-            1 => match_up_controller.show_match_ups(),
-            2 => match_up_controller.show_bets(),
-            3 => match_up_controller.add_match_up(),
-            4 => match_up_controller.add_bet(),
-            5 => match_up_controller.delete_match(),
-            6 => match_up_controller.delete_bet(),
-            7 => match_up_controller.calculate_winnings(),
-            8 => exit(),
-            _ => println!("That's not right, try again"),
-        }
-    }
-}
-
-fn exit() {
-    println!("Bye!");
-    std::process::exit(420);
 }
 
