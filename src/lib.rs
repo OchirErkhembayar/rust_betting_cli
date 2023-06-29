@@ -116,7 +116,7 @@ impl MatchUpController {
 
         view::display_title("Bets");
         for (i, bet) in match_up.bets.iter().enumerate() {
-            println!("{}. {}: {} - {}", i, bet.user, bet.athlete, bet.amount);
+            println!("{}. {}: {} - {}", i + 1, bet.user, bet.athlete, bet.amount);
         }
         println!("");
     }
@@ -131,11 +131,11 @@ impl MatchUpController {
         };
         view::display_title("Bets");
         for (i, bet) in match_up.bets.iter().enumerate() {
-            println!("{}. {}: {} - {}", i, bet.user, bet.athlete, bet.amount);
+            println!("{}. {}: {} - {}", i + 1, bet.user, bet.athlete, bet.amount);
         }
         println!("");
         let index = match view::get_usize_input("Enter the bet number") {
-            Ok(index) => index,
+            Ok(index) => index - 1,
             Err(error) => {
                 view::display_error(&error);
                 return;
