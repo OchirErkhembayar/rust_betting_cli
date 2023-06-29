@@ -3,7 +3,7 @@ name = "puller_public_betting"
 version = "0.1.0"
 edition = "2021"
 description = "CLI for organising bets"
-license = "MIT or Apache-2.0"
+license = "The MIT License"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
