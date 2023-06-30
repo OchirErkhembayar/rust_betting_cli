@@ -9,7 +9,18 @@ pub struct MatchUpRepository {
 
 impl MatchUpRepository {
     pub fn new() -> Self {
-        let serialized = fs::read_to_string("data.json").unwrap();
+        let serialized = match fs::read_to_string("data.json") {
+            Ok(serialized) => serialized,
+            Err(_) => {
+                let match_up_container = MatchUpContainer {
+                    match_ups: Vec::new(),
+                };
+                let serialized = serde_json::to_string(&match_up_container).unwrap();
+                fs::File::create("data.json").unwrap();
+                fs::write("data.json", &serialized).unwrap();
+                serialized
+            }
+        };
         let match_up_container: MatchUpContainer = serde_json::from_str(&serialized).unwrap();
 
         MatchUpRepository {
