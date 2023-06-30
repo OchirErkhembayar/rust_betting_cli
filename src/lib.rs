@@ -58,13 +58,13 @@ struct MatchUpController {
 }
 
 impl MatchUpController {
-    pub fn new(match_up_repository: MatchUpRepository) -> MatchUpController {
+    fn new(match_up_repository: MatchUpRepository) -> MatchUpController {
         MatchUpController {
             match_up_repository,
         }
     }
 
-    pub fn add_match_up(&mut self) {
+    fn add_match_up(&mut self) {
         let athlete_one = match view::get_string_input("Enter the first athlete's name") {
             Ok(athlete_one) => athlete_one,
             Err(error) => {
@@ -84,7 +84,7 @@ impl MatchUpController {
         });
     }
 
-    pub fn add_bet(&mut self) {
+    fn add_bet(&mut self) {
         let match_up = match self.get_match_up() {
             Ok(match_up) => match_up,
             Err(error) => {
@@ -143,14 +143,14 @@ impl MatchUpController {
         view::display_sucess("Successfully added bet");
     }
 
-    pub fn show_match_ups(&mut self) {
+    fn show_match_ups(&mut self) {
         view::display_title("Matches");
         for (i, match_up) in self.match_up_repository.get_match_ups().iter().enumerate() {
             println!("{}. {} vs {}", i + 1, match_up.athlete_one, match_up.athlete_two);
         }
     }
 
-    pub fn show_bets(&mut self) {
+    fn show_bets(&mut self) {
         let match_up = match self.get_match_up() {
             Ok(match_up) => match_up,
             Err(error) => {
@@ -166,7 +166,7 @@ impl MatchUpController {
         println!("");
     }
 
-    pub fn delete_bet(&mut self) {
+    fn delete_bet(&mut self) {
         let match_up = match self.get_match_up() {
             Ok(match_up) => match_up,
             Err(error) => {
@@ -214,7 +214,7 @@ impl MatchUpController {
         Ok(match_up)
     }
 
-    pub fn calculate_winnings(&mut self) {
+    fn calculate_winnings(&mut self) {
         let match_up = match self.get_match_up() {
             Ok(match_up) => match_up,
             Err(error) => {
@@ -257,7 +257,7 @@ impl MatchUpController {
         }
     }
 
-    pub fn delete_match(&mut self) {
+    fn delete_match(&mut self) {
         self.show_match_ups();
         let index = match view::get_usize_input("Enter the match number") {
             Ok(index) => index,
