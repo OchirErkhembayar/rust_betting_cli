@@ -29,7 +29,7 @@ impl MatchUp {
         Ok(())
     }
 
-    pub fn payout(&self, athlete: &str) -> Result<Vec<String>, String> {
+    pub fn payout(&self, athlete: &str, bonus: bool) -> Result<Vec<String>, String> {
         if !self.athlete_exists(athlete) {
             return Err(self.incorrect_athlete());
         }
@@ -50,7 +50,10 @@ impl MatchUp {
         }
         let winning_ratio: f32 = losing_pot / winning_pot;
         for bet in winning_bets.iter() {
-            let winnings: f32 = bet.amount * winning_ratio;
+            let mut winnings: f32 = bet.amount * winning_ratio;
+            if bonus {
+                winnings += bet.amount * 0.5;
+            }
             output_text.push(format!("/add-money {} {}", bet.user, winnings));
         }
         for bet in losing_bets.iter() {

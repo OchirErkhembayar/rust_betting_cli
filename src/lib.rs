@@ -244,7 +244,26 @@ impl MatchUpController {
             }
         };
 
-        let payouts = match match_up.payout(&athlete) {
+        println!("Do you want to add a 50% mininmum win?");
+        println!("1. Yes");
+        println!("2. No");
+
+        let bonus_choice = match view::get_usize_input("50% minimum win?") {
+            Ok(number) => match number {
+                1 => true,
+                2 => false,
+                _ => {
+                    view::display_error("Much pick 1 or 2");
+                    return;
+                },
+            },
+            Err(err) => {
+                view::display_error(&err);
+                return;
+            },
+        };
+
+        let payouts = match match_up.payout(&athlete, bonus_choice) {
             Ok(payouts) => payouts,
             Err(error) => {
                 view::display_error(&error);
